@@ -10,6 +10,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(bodyParser.json());
+
+app.post('/api/stuff', (req, res, next) => {
+  console.log(req.body);
+  res.status(201).json({
+    message: 'Thing created successfully!'
+  });
+});
 
 app.use((req, res, next) => {
   console.log('Request received!');
