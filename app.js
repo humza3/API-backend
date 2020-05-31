@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 
 app.post('/api/sauces', (req, res, next) => {
   const sauce = new Sauce({
-	_id: req.body._id,
+	_id: req.body.id,
 	userId: req.body.userId,
     name: req.body.name,
     manufacturer: req.body.manufacturer,
@@ -77,6 +77,36 @@ app.use('/api/sauces', (req, res, next) => {
   Sauce.find().then(
     (sauces) => {
       res.status(200).json(sauces);
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
+});
+
+app.put('/api/sauces/:id', (req, res, next) => {
+  const sauce = new Sauce({
+    _id: req.params.id,
+	userId: req.body.userId,
+    name: req.body.name,
+    manufacturer: req.body.manufacturer,
+    description: req.body.description,
+    mainPepper: req.body.mainPepper,
+    imageUrl: req.body.imageUrl,
+    heat: req.body.heat,
+    likes: req.body.likes,
+    dislikes: req.body.dislikes,
+    userLiked: req.body.userLiked,
+    userDisliked: req.body.userDisliked
+  });
+  Sauce.updateOne({_id: req.params.id}, sauce).then(
+    () => {
+      res.status(201).json({
+        message: 'Sauce updated successfully!'
+      });
     }
   ).catch(
     (error) => {
