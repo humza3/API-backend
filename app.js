@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 
-
+//save sauces to the database
 app.post('/api/sauces', (req, res, next) => {
   const sauce = new Sauce({
 	_id: req.body.id,
@@ -56,7 +56,7 @@ app.post('/api/sauces', (req, res, next) => {
     }
   );
 });
-
+//display a single sauce onn  a page
 app.get('/api/sauces/:id', (req, res, next) => {
   Sauce.findOne({
     _id: req.params.id
@@ -73,20 +73,8 @@ app.get('/api/sauces/:id', (req, res, next) => {
   );
 });
 
-app.use('/api/sauces', (req, res, next) => {
-  Sauce.find().then(
-    (sauces) => {
-      res.status(200).json(sauces);
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
-});
 
+//update suaces with modifications
 app.put('/api/sauces/:id', (req, res, next) => {
   const sauce = new Sauce({
     _id: req.params.id,
@@ -116,24 +104,36 @@ app.put('/api/sauces/:id', (req, res, next) => {
     }
   );
 });
-
-app.use((req, res, next) => {
-  console.log('Request received!');
-  next();
+//deletesauce from datatbase and page
+app.delete('/api/sauces/:id', (req, res, next) => {
+  Sauce.deleteOne({_id: req.params.id}).then(
+    () => {
+      res.status(200).json({
+        message: 'Deleted!'
+      });
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
 });
 
-app.use((req, res, next) => {
-  res.status(201);
-  next();
-});
-
-app.use((req, res, next) => {
-  res.json({ message: 'Your request was successful!' });
-  next();
-});
-
-app.use((req, res, next) => {
-  console.log('Response sent successfully!');
+//retreive and list sauces for sale
+app.use('/api/sauces', (req, res, next) => {
+  Sauce.find().then(
+    (sauces) => {
+      res.status(200).json(sauces);
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
 });
 
 module.exports = app;
