@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/humza3/API-backend#readme",
   "dependencies": {
+    "@angular/cli": "^9.1.7",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.16"
