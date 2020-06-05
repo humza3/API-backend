@@ -3,18 +3,13 @@ const Sauce = require('../models/sauce');
 //save sauces to the database
 exports.createSauce = (req, res, next) => {
   const sauce = new Sauce({
-	_id: req.body.id,
 	userId: req.body.userId,
     name: req.body.name,
     manufacturer: req.body.manufacturer,
     description: req.body.description,
     mainPepper: req.body.mainPepper,
     imageUrl: req.body.imageUrl,
-    heat: req.body.heat,
-    likes: req.body.likes,
-    dislikes: req.body.dislikes,
-    userLiked: req.body.userLiked,
-    userDisliked: req.body.userDisliked
+    heat: req.body.heat
   });
   sauce.save().then(
     () => {
