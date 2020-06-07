@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const auth = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
+
 
 const stuffCtrl = require('../controllers/stuff');
 
@@ -9,7 +11,7 @@ const stuffCtrl = require('../controllers/stuff');
 //retreive and list sauces for sale
 router.get('/', auth, stuffCtrl.getAllSauce);
 //save sauces to the database
-router.post('/', auth, stuffCtrl.createSauce);
+router.post('/', auth, multer, stuffCtrl.createSauce);
 //display a single sauce on  a page
 router.get('/:id', auth, stuffCtrl.getOneSauce);
 //update suaces with modifications
