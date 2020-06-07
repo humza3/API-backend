@@ -15,7 +15,7 @@ router.post('/', auth, multer, stuffCtrl.createSauce);
 //display a single sauce on  a page
 router.get('/:id', auth, stuffCtrl.getOneSauce);
 //update suaces with modifications
-router.put('/:id', auth, stuffCtrl.modifySauce);
+router.put('/:id', auth, multer, stuffCtrl.modifySauce);
 //deletesauce from database and page
 router.delete('/:id', auth, stuffCtrl.deleteSauce);
 
