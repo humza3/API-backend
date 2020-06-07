@@ -2,6 +2,7 @@ const Sauce = require('../models/sauce');
 
 //save sauces to the database
 exports.createSauce = (req, res, next) => {
+	console.log(req.body);
   const sauce = new Sauce({
 	userId: req.body.userId,
     name: req.body.name,
@@ -9,16 +10,22 @@ exports.createSauce = (req, res, next) => {
     description: req.body.description,
     mainPepper: req.body.mainPepper,
     imageUrl: req.body.imageUrl,
-    heat: req.body.heat
+    heat: req.body.heat,
+	likes: 0,
+	dislikes: 0,
+	usersLiked: [],
+	usersDisliked: []
   });
   sauce.save().then(
     () => {
+		console.log("saved");
       res.status(201).json({
         message: 'Post saved successfully!'
       });
     }
   ).catch(
     (error) => {
+		console.log("error");
       res.status(400).json({
         error: error
       });
