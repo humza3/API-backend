@@ -1,9 +1,10 @@
 const Sauce = require('../models/sauce');
+const fs = require('fs');
 
 //save sauces to the database
 exports.createSauce = (req, res, next) => {
-	req.body.sauce = JSON.parse(req.body.sauce);
 	const url = req.protocol + '://' + req.get('host');
+	req.body.sauce = JSON.parse(req.body.sauce);
 	const sauce = new Sauce({
 		userId: req.body.sauce.userId,
 		name: req.body.sauce.name,
@@ -54,6 +55,7 @@ exports.modifySauce = (req, res, next) => {
 	let sauce = new Sauce({ _id: req.params._id });
 	if (req.file) {
 		const url = req.protocol + '://' + req.get('host');
+		req.body.sauce = JSON.parse(req.body.sauce);
 		sauce = {
 			_id: req.params.id,
 			userId: req.body.sauce.userId,
@@ -77,11 +79,7 @@ exports.modifySauce = (req, res, next) => {
 			description: req.body.description,
 			mainPepper: req.body.mainPepper,
 			imageUrl: req.body.imageUrl,
-			heat: req.body.heat,
-			likes: req.body.likes,
-			dislikes: req.body.dislikes,
-			userLiked: req.body.userLiked,
-			userDisliked: req.body.userDisliked
+			heat: req.body.heat
 		};		
 	}	
 	Sauce.updateOne({_id: req.params.id}, sauce).then(
@@ -101,19 +99,26 @@ exports.modifySauce = (req, res, next) => {
 
 //deletesauce from database and page
 exports.deleteSauce = (req, res, next) => {
-  Sauce.deleteOne({_id: req.params.id}).then(
-    () => {
-      res.status(200).json({
-        message: 'Deleted!'
-      });
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
+	Sauce.findOne({_id: req.params.id}).then(
+		(sauce) => {
+			const filename = thing.imageUrl.split('/images/')[1];
+			fs.unlink('images/' + filename, () => {
+				Sauce.deleteOne({_id: req.params.id}).then(
+					() => {
+						res.status(200).json({
+							message: 'Deleted!'
+						});
+					}
+				).catch(
+					(error) => {
+						res.status(400).json({
+							error: error
+						});
+					}
+				);
+			});
+		}
+	);
 };
 
 //retreive and list sauces for sale
