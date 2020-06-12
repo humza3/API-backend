@@ -3,8 +3,8 @@ const fs = require('fs');
 
 //save sauces to the database
 exports.createSauce = (req, res, next) => {
-	const url = req.protocol + '://' + req.get('host');
 	req.body.sauce = JSON.parse(req.body.sauce);
+	const url = req.protocol + '://' + req.get('host');
 	const sauce = new Sauce({
 		userId: req.body.sauce.userId,
 		name: req.body.sauce.name,
@@ -123,15 +123,55 @@ exports.deleteSauce = (req, res, next) => {
 
 //retreive and list sauces for sale
 exports.getAllSauce = (req, res, next) => {
-  Sauce.find().then(
-    (sauces) => {
-      res.status(200).json(sauces);
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
-}
+	Sauce.find().then(
+		(sauces) => {
+			res.status(200).json(sauces);
+		}
+	).catch(
+		(error) => {
+			res.status(400).json({
+				error: error
+			});
+		}		
+	);
+};
+
+//like a sauce
+exports.likeSauce = (req, res, next) => {
+	Sauce.findOne({_id: req.params.id}).then(
+		(sauce) => {
+			likes: req.body.likes + 1,
+			usersLiked: req.body.userId
+		};
+	Sauce.find().then(
+		(sauces) => {
+			res.status(200).json(sauces);
+		}
+	).catch(
+		(error) => {
+			res.status(400).json({
+				error: error
+			});
+		}
+	);
+};
+
+//dislike a sauce
+exports.dislikeSauce = (req, res, next) => {
+	Sauce.findOne({_id: req.params.id}).then(
+		(sauce) => {
+			dislikes: req.body.dislikes - 1,
+			usersDisliked: req.body.userId
+		};
+	Sauce.find().then(
+		(sauces) => {
+			res.status(200).json(sauces);
+		}
+	).catch(
+		(error) => {
+			res.status(400).json({
+				error: error
+			});
+		}
+	);
+};
