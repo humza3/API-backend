@@ -138,14 +138,18 @@ exports.getAllSauce = (req, res, next) => {
 
 //like a sauce
 exports.likeSauce = (req, res, next) => {
-	Sauce.findOne({_id: req.params.id}).then(
-		(sauce) => {
-			likes: req.body.likes + 1,
-			usersLiked: req.body.userId
-		};
-	Sauce.find().then(
-		(sauces) => {
-			res.status(200).json(sauces);
+	let sauce = new Sauce({ _id: req.params._id });
+	req.body.sauce = JSON.parse(req.body.sauce);
+	sauce = {
+		usersLiked: [req.body.userId],
+		likes: req.body.likes + 1,
+		dislikes: req.body.dislikes + 0
+	};	
+	Sauce.likeOne({_id: req.params.id}, sauce).then(
+		() => {
+			res.status(201).json({
+				message: 'Sauce liked successfully!'
+			});
 		}
 	).catch(
 		(error) => {
@@ -158,14 +162,18 @@ exports.likeSauce = (req, res, next) => {
 
 //dislike a sauce
 exports.dislikeSauce = (req, res, next) => {
-	Sauce.findOne({_id: req.params.id}).then(
-		(sauce) => {
-			dislikes: req.body.dislikes - 1,
-			usersDisliked: req.body.userId
-		};
-	Sauce.find().then(
-		(sauces) => {
-			res.status(200).json(sauces);
+	let sauce = new Sauce({ _id: req.params._id });
+	req.body.sauce = JSON.parse(req.body.sauce);
+	sauce = {
+		usersDisliked: [req.body.userId],
+		likes: req.body.likes - 1,
+		dislikes: req.body.dislikes + 0
+	};	
+	Sauce.likeOne({_id: req.params.id}, sauce).then(
+		() => {
+			res.status(201).json({
+				message: 'Sauce liked successfully!'
+			});
 		}
 	).catch(
 		(error) => {
