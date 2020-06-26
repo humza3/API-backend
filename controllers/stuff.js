@@ -3,8 +3,8 @@ const fs = require('fs');
 
 //save sauces to the database
 exports.createSauce = (req, res, next) => {
-	req.body.sauce = JSON.parse(req.body.sauce);
 	const url = req.protocol + '://' + req.get('host');
+	req.body.sauce = JSON.parse(req.body.sauce);	
 	const sauce = new Sauce({
 		userId: req.body.sauce.userId,
 		name: req.body.sauce.name,
@@ -51,7 +51,6 @@ exports.getOneSauce = (req, res, next) => {
 //update sauces with modifications
 exports.modifySauce = (req, res, next) => {
 	let sauce = new Sauce({ _id: req.params.id });
-	console.log(req.file);
 	if (req.file) {
 		const url = req.protocol + '://' + req.get('host');
 		req.body.sauce = JSON.parse(req.body.sauce);
@@ -63,26 +62,37 @@ exports.modifySauce = (req, res, next) => {
 			description: req.body.sauce.description,
 			mainPepper: req.body.sauce.mainPepper,
 			imageUrl: url + '/images/' + req.file.filename,
-			heat: req.body.sauce.heat,
-			likes: 0,
-			dislikes: 0,
-			usersLiked: [],
-			usersDisliked: []
-		};		
-		console.log(req.file);
+			heat: req.body.sauce.heat
+		};			
 	} else {
-		sauce = {
-			_id: req.params.id,
-			userId: req.body.userId,
-			name: req.body.name,
-			manufacturer: req.body.manufacturer,
-			description: req.body.description,
-			mainPepper: req.body.mainPepper,
-			imageUrl: req.body.imageUrl,
-			heat: req.body.heat
-			
-		};		
-		console.log(req.body.imageUrl);
+		Sauce.findOne({_id: req.params.id}).then((sauceResponse) => {
+				sauce = {
+					_id: req.params.id,
+					userId: req.body.userId,
+					name: req.body.name,
+					manufacturer: req.body.manufacturer,
+					description: req.body.description,
+					mainPepper: req.body.mainPepper,
+					imageUrl: sauceResponse.imageUrl,
+					heat: req.body.heat			
+				};	
+				Sauce.updateOne({_id: req.params.id}, sauce).then(
+						() => {
+							res.status(201).json({
+							message: 'Sauce updated successfully!'
+						});
+						}
+				).catch(
+					(error) => {
+							res.status(400).json({
+							error: error
+						});
+					}	
+				);
+			}).catch((error) => {
+				res.status(404).json({error: error});				
+			});	
+			console.log(sauce);
 	}	
 	Sauce.updateOne({_id: req.params.id}, sauce).then(
 		() => {
@@ -141,12 +151,16 @@ exports.getAllSauce = (req, res, next) => {
 //like a sauce
 exports.likeSauce = (req, res, next) => {
 	let sauce = new Sauce({ _id: req.params._id });
-	console.log(req.body);
-	sauce = {
-		usersLiked: [req.body.userId],
-		likes: req.body.likes + 1
-	};	
-	Sauce.likeOne({_id: req.params.id}, sauce).then(
+	req.body.sauce = JSON.parse(req.body.sauce);
+	if (sauce.userId = sauce.userId) {
+		sauce = {
+			usersLiked: [req.body.userId],
+			likes: req.body.likes + 1
+		};		
+	} else {
+		console.log('user not logged in');
+	}
+	Sauce.updateOne({_id: req.params.id}, sauce).then(
 		() => {
 			res.status(201).json({
 				message: 'Sauce liked successfully!'
