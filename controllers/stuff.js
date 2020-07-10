@@ -152,15 +152,23 @@ exports.getAllSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
 	let sauce = new Sauce({ _id: req.params._id });
 	req.body.sauce = JSON.parse(req.body.sauce);
-	if (sauce.userId = sauce.userId) {
+	console.log(sauce.userId);
+	if (sauce.userId) {
 		sauce = {
-			usersLiked: [req.body.userId],
-			likes: req.body.likes + 1
-		};		
+			_id: req.params._id,
+			usersLiked: [req.body.sauce.userId],
+			likes: req.body.sauce.likes + 1
+		};	
+		console.log(sauce);
 	} else {
+		sauce = {
+			_id: req.params._id,
+			usersLiked: [],
+			likes: req.body.sauce.likes + 0
+		};
 		console.log('user not logged in');
 	}
-	Sauce.updateOne({_id: req.params.id}, sauce).then(
+	sauce.updateOne({_id: req.params.id}, sauce).then(
 		() => {
 			res.status(201).json({
 				message: 'Sauce liked successfully!'
