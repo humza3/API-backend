@@ -152,47 +152,28 @@ exports.getAllSauce = (req, res, next) => {
 exports.likeSauce = (req, res, next) => {
 	let sauce = new Sauce({ _id: req.params._id });
 	req.body.sauce = JSON.parse(req.body.sauce);
-	console.log(sauce.userId);
-	if (sauce.userId) {
+	//like
+	if (req.body.like === 1) {
 		sauce = {
-			_id: req.params._id,
 			usersLiked: [req.body.sauce.userId],
 			likes: req.body.sauce.likes + 1
-		};	
-		console.log(sauce);
-	} else {
-		sauce = {
-			_id: req.params._id,
-			usersLiked: [],
-			likes: req.body.sauce.likes + 0
 		};
-		console.log('user not logged in');
+    }
+	//unlike
+	if (req.body.like === 0) {
+		sauce = {
+			usersLiked: [],
+			likes: req.body.sauce.likes - 1
+		};
 	}
-	sauce.updateOne({_id: req.params.id}, sauce).then(
-		() => {
-			res.status(201).json({
-				message: 'Sauce liked successfully!'
-			});
-		}
-	).catch(
-		(error) => {
-			res.status(400).json({
-				error: error
-			});
-		}
-	);
-};
-
-//dislike a sauce
-exports.dislikeSauce = (req, res, next) => {
-	let sauce = new Sauce({ _id: req.params._id });
-	req.body.sauce = JSON.parse(req.body.sauce);
-	sauce = {
-		usersDisliked: [req.body.userId],
-		likes: req.body.likes - 1,
-		dislikes: req.body.dislikes + 0
-	};	
-	Sauce.likeOne({_id: req.params.id}, sauce).then(
+	//dislike
+	if (req.body.like === -1) {
+		sauce = {			
+			usersDisliked: [req.body.sauce.userId],
+			dislikes: req.body.sauce.dislikes + 1
+		};
+	} 
+	sauce.save().then(
 		() => {
 			res.status(201).json({
 				message: 'Sauce liked successfully!'
