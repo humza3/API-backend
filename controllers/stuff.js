@@ -150,40 +150,36 @@ exports.getAllSauce = (req, res, next) => {
 
 //like a sauce
 exports.likeSauce = (req, res, next) => {
-	let sauce = new Sauce({ _id: req.params._id });
-	req.body.sauce = JSON.parse(req.body.sauce);
-	//like
-	if (req.body.like === 1) {
-		sauce = {
-			usersLiked: [req.body.sauce.userId],
-			likes: req.body.sauce.likes + 1
-		};
-    }
+  Sauce.findOne({ _id: req.params.id }).then(sauce => {
+	 //like
+    if (req.body.like == 1) {
+      sauce.usersLiked.push(req.body.userId)
+      sauce.likes += req.body.like	  
+    } 
 	//unlike
-	if (req.body.like === 0) {
-		sauce = {
-			usersLiked: [],
-			likes: req.body.sauce.likes - 1
-		};
-	}
+	else if (req.body.like == 0 && sauce.usersLiked.includes(req.body.userId)) {
+      sauce.usersLiked.remove(req.body.userId)
+      sauce.likes -= 1
+    } 
 	//dislike
-	if (req.body.like === -1) {
-		sauce = {			
-			usersDisliked: [req.body.sauce.userId],
-			dislikes: req.body.sauce.dislikes + 1
-		};
-	} 
-	sauce.save().then(
-		() => {
-			res.status(201).json({
-				message: 'Sauce liked successfully!'
-			});
-		}
-	).catch(
-		(error) => {
-			res.status(400).json({
-				error: error
-			});
-		}
-	);
+	else if (req.body.like == -1) {
+      sauce.usersDisliked.push(req.body.userId)
+      sauce.dislikes += 1
+    } 
+	//undislike
+	else if (req.body.like == 0 && sauce.usersDisliked.includes(req.body.userId)) {
+      sauce.usersDisliked.remove(req.body.userId)
+      sauce.dislikes -= 1
+    }
+    sauce.save().then(() => {
+        res.status(200).json({
+          message: 'Sauce liked successfully' 
+        });
+      }).catch(
+	  (error) => {
+        res.status(400).json({
+          error: error
+        });
+      });
+  })
 };
